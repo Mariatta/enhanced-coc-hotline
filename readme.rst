@@ -1,0 +1,61 @@
+Enhanced CoC Hotline
+====================
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/ambv/black
+
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    :target: https://saythanks.io/to/Mariatta
+
+
+This is an enhanced version of the `PyCascades Code of Conduct Hotline
+<https://github.com/cache-rules/coc-hotline>`_.
+
+The hotline uses Nexmo Voice API + Zapier integration.
+
+Purpose
+-------
+
+When a caller calls the hotline, the hotline will dial each of the PyCascades
+organizers, and the caller will be connected to the first person who answered.
+
+Calls to this hotline is automatically recorded.
+
+Requirements
+------------
+
+Python 3.6+ because of f-strings.
+
+
+Library Dependencies
+--------------------
+
+- aiohttp
+- nexmo
+
+Deployment
+----------
+
+|Deploy|
+
+.. |Deploy| image:: https://www.herokucdn.com/deploy/button.svg
+   :target: https://heroku.com/deploy?template=https://github.com/mariatta/enhanced-coc-hotline
+
+In Heroku, set the environment variables:
+
+- ``NEXMO_APP_ID``: The Nexmo App ID
+- ``NEXMO_PRIVATE_KEY_VOICE_APP``: The content of the private key (from private.key file).
+  It looks like the following:
+  ```----- BEGIN PRIVATE KEY ----   blablahblah ---- END PRIVATE KEY ----```
+- ``PHONE_NUMBERS``: A list of staff name and phone number dictionaries.
+  Example:
+  ```
+  [{"name": "Mariatta", "phone": "16040000000"}, {"name": "Miss Islington", "phone": "1778111111"}]
+  ```
+- ``ZAPIER_CATCH_HOOK_RECORDING_URL``: The Webhooks By Zapier url.
+
+
+License
+-------
+
+GNU General Public License v3.0.
