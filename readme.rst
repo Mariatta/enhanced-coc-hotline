@@ -11,15 +11,15 @@ Enhanced CoC Hotline
 This is an enhanced version of the `PyCascades Code of Conduct Hotline
 <https://github.com/cache-rules/coc-hotline>`_.
 
-The hotline uses Nexmo Voice API + Zapier integration.
+This hotline uses Nexmo Voice API + Zapier integration.
 
 Purpose
 -------
 
-When a caller calls the hotline, the hotline will dial each of the PyCascades
+When a caller calls the hotline, it will dial each of the PyCascades
 organizers, and the caller will be connected to the first person who answered.
 
-Calls to this hotline is automatically recorded.
+All calls to this hotline are automatically recorded.
 
 Requirements
 ------------
@@ -32,6 +32,7 @@ Library Dependencies
 
 - aiohttp
 - nexmo
+- click
 
 Deployment
 ----------
