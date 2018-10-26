@@ -45,15 +45,19 @@ Deployment
 In Heroku, set the environment variables:
 
 - ``NEXMO_APP_ID``: The Nexmo App ID
+
 - ``NEXMO_PRIVATE_KEY_VOICE_APP``: The content of the private key (from private.key file).
+  
   It looks like the following:
   ```----- BEGIN PRIVATE KEY ----   blablahblah ---- END PRIVATE KEY ----```
+
 - ``PHONE_NUMBERS``: A list of staff name and phone number dictionaries.
 
   Example:
   ```
   [{"name": "Mariatta", "phone": "16040000000"}, {"name": "Miss Islington", "phone": "1778111111"}]
   ```
+
 - ``ZAPIER_CATCH_HOOK_RECORDING_URL``: The Webhooks By Zapier url.
 
 
