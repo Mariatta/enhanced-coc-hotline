@@ -54,8 +54,11 @@ In Heroku, set the environment variables:
 - ``PHONE_NUMBERS``: A list of staff name and phone number dictionaries.
 
   Example:
+  
   ```
+  
   [{"name": "Mariatta", "phone": "16040000000"}, {"name": "Miss Islington", "phone": "1778111111"}]
+  
   ```
 
 - ``ZAPIER_CATCH_HOOK_RECORDING_URL``: The Webhooks By Zapier url.
