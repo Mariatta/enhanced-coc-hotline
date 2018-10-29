@@ -1,4 +1,5 @@
 import os
+import sys
 
 import click
 import nexmo
@@ -10,6 +11,13 @@ def get_nexmo_client():
     """Return an instance of Nexmo client library"""
     app_id = os.environ.get("NEXMO_APP_ID")
     private_key = os.environ.get("NEXMO_PRIVATE_KEY_VOICE_APP")
+
+    if not app_id:
+        click.echo("Missing NEXMO_APP_ID environment variable.")
+        sys.exit(-1)
+    if not private_key:
+        click.echo("Missing NEXMO_PRIVATE_KEY_VOICE_APP environment variable.")
+        sys.exit(-1)
 
     client = nexmo.Client(application_id=app_id, private_key=private_key)
     return client

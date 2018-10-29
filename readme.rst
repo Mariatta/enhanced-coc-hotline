@@ -61,6 +61,24 @@ In Heroku, set the environment variables:
 - ``ZAPIER_CATCH_HOOK_RECORDING_URL``: The Webhooks By Zapier url.
 
 
+Downloading the recording
+-------------------------
+
+Requires click 7.0+
+
+Set the environment variables:
+
+- ``NEXMO_APP_ID``: The Nexmo App ID
+- ``NEXMO_PRIVATE_KEY_VOICE_APP``: The content of the private key (from private.key file).
+  It looks like the following:
+  ```----- BEGIN PRIVATE KEY ----   blablahblah ---- END PRIVATE KEY ----```
+
+In the `enhanced-coc-hotline` directory, run::
+
+   $ python3 -m download_recording url1 url2 url3 ...
+
+
+
 License
 -------
 
