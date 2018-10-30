@@ -1,6 +1,10 @@
 Enhanced CoC Hotline
 ====================
 
+.. image:: https://img.shields.io/travis/com/Mariatta/enhanced-coc-hotline/master.svg
+    :target: https://travis-ci.com/Mariatta/enhanced-coc-hotline
+.. image:: https://codecov.io/gh/mariatta/enhanced-coc-hotline/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/mariatta/enhanced-coc-hotline
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
 
