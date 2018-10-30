@@ -129,7 +129,7 @@ async def answer_conference_call(request):
         response = client.send_speech(
             origin_call_uuid, text=f"{phone_number_owner} is joining this call."
         )
-    except nexmo.Error as er:
+    except nexmo.Error as er:  # pragma: no cover
         print(
             f"error sending speech to {origin_call_uuid}, owner is {phone_number_owner}"
         )
@@ -153,7 +153,7 @@ async def answer_conference_call(request):
     return web.json_response(ncco)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     app = web.Application()
     app.router.add_routes(routes)
 
