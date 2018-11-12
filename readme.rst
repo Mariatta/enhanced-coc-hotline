@@ -15,7 +15,8 @@ Enhanced CoC Hotline
 This is an enhanced version of the `PyCascades Code of Conduct Hotline
 <https://github.com/cache-rules/coc-hotline>`_.
 
-This hotline uses [Nexmo Voice API](https://www.nexmo.com/products/voice) + [Zapier](https://zapier.com/) integration.
+This hotline uses `Nexmo Voice API <https://www.nexmo.com/products/voice>`_ +
+`Zapier <https://zapier.com/>`_ integration.
 
 Purpose
 -------
