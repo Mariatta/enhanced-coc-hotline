@@ -8,11 +8,11 @@ from aiohttp import web
 routes = web.RouteTableDef()
 
 MUSIC_WHILE_YOU_WAIT = [
-    "https://s3.ca-central-1.amazonaws.com/strangerelationship/Savage+Garden+-+Crash+And+Burn.mp3",
-    "https://s3.ca-central-1.amazonaws.com/strangerelationship/Savage+Garden+-+I+Want+You.mp3",
-    "https://s3.ca-central-1.amazonaws.com/strangerelationship/Savage+Garden+-+Truly+Madly+Deeply.mp3",
-    "https://s3.ca-central-1.amazonaws.com/strangerelationship/Savage+Garden+-+To+The+Moon+%26+Back+(Extended+Version).mp3",
-    "https://s3.ca-central-1.amazonaws.com/strangerelationship/Savage+Garden-+The+Best+Thing+Lyrics.mp3",
+    "https://assets.ctfassets.net/j7pfe8y48ry3/530pLnJVZmiUu8mkEgIMm2/dd33d28ab6af9a2d32681ae80004886e/oaklawn-dreams.mp3",
+    "https://assets.ctfassets.net/j7pfe8y48ry3/2toXv1xuOsMm0Yku0YEGya/a792ce81a7866fc77f6768d416018012/broken-shovel.mp3",
+    "https://assets.ctfassets.net/j7pfe8y48ry3/16VJzaewWsKWg4GsSUiwGi/9b715be5e8c850e46de98b64e6d31141/lennys-song.mp3",
+    "https://assets.ctfassets.net/j7pfe8y48ry3/1qApZVYkxaiayA6aysGAOo/8983586c8ab4db8b69490718469a12f5/new-juno.mp3",
+    "https://assets.ctfassets.net/j7pfe8y48ry3/6iXXKtJCp2oCMiGmsmAKqu/8163a8fe863405292ba3609193593add/davis-square-shuffle.mp3",
 ]
 
 
