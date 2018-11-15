@@ -18,6 +18,7 @@ This is an enhanced version of the `PyCascades Code of Conduct Hotline
 This hotline uses `Nexmo Voice API <https://www.nexmo.com/products/voice>`_ +
 `Zapier <https://zapier.com/>`_ integration.
 
+
 Purpose
 -------
 
@@ -25,6 +26,9 @@ When a caller calls the hotline, it will dial each of the PyCascades
 organizers, and the caller will be connected to the first person who answered.
 
 All calls to this hotline are automatically recorded.
+
+For additional details of how to set up the hotline, please read my `Nexmo Developer Spotlight <https://www.nexmo.com/blog/2018/11/15/pycascades-code-of-conduct-hotline-nexmo-voice-api-dr/?sf95092442=1>`_
+tutorial, posted November 15, 2018.
 
 Requirements
 ------------
