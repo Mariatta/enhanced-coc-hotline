@@ -161,6 +161,7 @@ async def answer_conference_call(request):
             "endOnExit": True,
         },
     ]
+    print(ncco)
     return web.json_response(ncco)
 
 
