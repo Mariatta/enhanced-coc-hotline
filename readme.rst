@@ -23,9 +23,10 @@ Purpose
 -------
 
 When a caller calls the hotline, it will dial each of the PyCascades
-organizers, and the caller will be connected to the first person who answered.
+Code of Conduct committee members, and the caller will be connected to the first person who answered.
 
-All calls to this hotline are automatically recorded.
+Calls to the hotline can be (optionally) automatically recorded. By default, calls are not recorded.
+To autorecord, set both the ``AUTO_RECORD`` and ``ZAPIER_CATCH_HOOK_RECORDING_URL`` environment variables.
 
 For additional details of how to set up the hotline, please read my `Nexmo Developer Spotlight <https://www.nexmo.com/blog/2018/11/15/pycascades-code-of-conduct-hotline-nexmo-voice-api-dr/?sf95092442=1>`_
 tutorial, posted November 15, 2018.
@@ -33,7 +34,7 @@ tutorial, posted November 15, 2018.
 Requirements
 ------------
 
-Python 3.6.5+ because of f-strings.
+Python 3.6.5+ because of f-strings.  In reality, Python 3.7 is used (as specified in runtime.txt).
 
 
 Library Dependencies
@@ -67,7 +68,10 @@ In Heroku, set the environment variables:
   [{"name": "Mariatta", "phone": "16040000000"}, {"name": "Miss Islington", "phone": "1778111111"}]
 
 
+- ``AUTO_RECORD``: set to ``True`` if you want to autorecord incoming calls. This is optional, and will default to ``False`` if not set.
+
 - ``ZAPIER_CATCH_HOOK_RECORDING_URL``: The `Webhooks By Zapier <https://zapier.com/page/webhooks/>`_ url.
+  This is only needed if ``AUTO_RECORD`` is ``True``.
 
 
 Downloading the recording
