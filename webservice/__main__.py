@@ -83,6 +83,9 @@ async def answer_call(request):
         "musicOnHoldUrl": [random.choice(MUSIC_WHILE_YOU_WAIT)],
         "endOnExit": False,
         "startOnEnter": False,
+        "eventUrl": [
+            os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")
+        ],
     }
 
     if is_auto_recording():
