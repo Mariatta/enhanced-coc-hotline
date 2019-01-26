@@ -77,29 +77,26 @@ async def answer_call(request):
     greeting = "You've reached the PyCascades Code of Conduct Hotline."
 
     conversation_ncco = {
-            "action": "conversation",
-            "name": conversation_uuid,
-            "eventMethod": "POST",
-            "musicOnHoldUrl": [random.choice(MUSIC_WHILE_YOU_WAIT)],
-            "endOnExit": False,
-            "startOnEnter": False,
-        }
+        "action": "conversation",
+        "name": conversation_uuid,
+        "eventMethod": "POST",
+        "musicOnHoldUrl": [random.choice(MUSIC_WHILE_YOU_WAIT)],
+        "endOnExit": False,
+        "startOnEnter": False,
+    }
 
     if is_auto_recording():
         greeting = f"{greeting} This call is recorded."
-        conversation_ncco.update({
-            "record": True,
-            "eventUrl": [os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")],
-        })
+        conversation_ncco.update(
+            {
+                "record": True,
+                "eventUrl": [
+                    os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")
+                ],
+            }
+        )
 
-
-    ncco = [
-        {
-            "action": "talk",
-            "text": greeting,
-        },
-        conversation_ncco,
-    ]
+    ncco = [{"action": "talk", "text": greeting}, conversation_ncco]
 
     client = get_nexmo_client()
     phone_numbers = get_phone_numbers()
