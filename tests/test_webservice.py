@@ -91,11 +91,7 @@ def webservice_cli_autorecord(loop, aiohttp_client, monkeypatch):
         "ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL",
         "https://hooks.zapier.com/1111/2222",
     )
-    monkeypatch.setitem(
-        os.environ,
-        "AUTO_RECORD",
-        "True",
-    )
+    monkeypatch.setitem(os.environ, "AUTO_RECORD", "True")
 
     app = web.Application()
     app.router.add_routes(routes)
@@ -152,8 +148,7 @@ async def test_answer_conference_call(webservice_cli):
 
 
 async def test_answer_call_auto_record(webservice_cli_autorecord):
-    with mock.patch(
-            "webservice.__main__.get_nexmo_client") as mock_nexmo_client:
+    with mock.patch("webservice.__main__.get_nexmo_client") as mock_nexmo_client:
         mock_nexmo_client.return_value = FakeNexmoClient()
         resp = await webservice_cli_autorecord.get(
             "/webhook/answer/?conversation_uuid=CON-123-456&uuid=aaaa-bbbb&to=1800123456&from=Restricted"
@@ -163,8 +158,8 @@ async def test_answer_call_auto_record(webservice_cli_autorecord):
 
         assert response[0]["action"] == "talk"
         assert (
-                response[0]["text"]
-                == "You've reached the PyCascades Code of Conduct Hotline. This call is recorded."
+            response[0]["text"]
+            == "You've reached the PyCascades Code of Conduct Hotline. This call is recorded."
         )
 
         assert response[1]["action"] == "conversation"
@@ -176,5 +171,3 @@ async def test_answer_call_auto_record(webservice_cli_autorecord):
 
         assert response[1]["record"] is True
         assert response[1]["eventUrl"] == ["https://hooks.zapier.com/1111/2222"]
-
-
