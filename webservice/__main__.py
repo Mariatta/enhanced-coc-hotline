@@ -83,9 +83,6 @@ async def answer_call(request):
         "musicOnHoldUrl": [random.choice(MUSIC_WHILE_YOU_WAIT)],
         "endOnExit": False,
         "startOnEnter": False,
-        "eventUrl": [
-            os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")
-        ],
     }
 
     if is_auto_recording():
@@ -104,8 +101,6 @@ async def answer_call(request):
     client = get_nexmo_client()
     phone_numbers = get_phone_numbers()
 
-    print(phone_numbers)
-
     for phone_number_dict in phone_numbers:
         client.create_call(
             {
@@ -119,8 +114,7 @@ async def answer_call(request):
                 ],
             }
         )
-    print("return ncco")
-    print(ncco)
+
     return web.json_response(ncco)
 
 
@@ -168,8 +162,7 @@ async def answer_conference_call(request):
             "endOnExit": True,
         },
     ]
-    print("answer conf call")
-    print(ncco)
+
     return web.json_response(ncco)
 
 
