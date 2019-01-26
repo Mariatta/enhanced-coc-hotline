@@ -101,6 +101,8 @@ async def answer_call(request):
     client = get_nexmo_client()
     phone_numbers = get_phone_numbers()
 
+    print(phone_numbers)
+
     for phone_number_dict in phone_numbers:
         client.create_call(
             {
@@ -110,10 +112,12 @@ async def answer_call(request):
                     "number": os.environ.get("NEXMO_HOTLINE_NUMBER"),
                 },
                 "answer_url": [
-                    f"https://mariatta-enhanced-coc.herokuapp.com/webhook/answer_conference_call/{conversation_uuid}/{call_uuid}/"
+                    f"https://pycascades-coc-hotline-2019.herokuapp.com/webhook/answer_conference_call/{conversation_uuid}/{call_uuid}/"
                 ],
             }
         )
+    print("return ncco")
+    print(ncco)
     return web.json_response(ncco)
 
 
@@ -161,6 +165,7 @@ async def answer_conference_call(request):
             "endOnExit": True,
         },
     ]
+    print("answer conf call")
     print(ncco)
     return web.json_response(ncco)
 
