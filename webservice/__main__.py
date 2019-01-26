@@ -54,38 +54,49 @@ def get_phone_number_owner(phone_number):
     return None
 
 
+def is_auto_recording():
+    autorecord_flag = os.environ.get("AUTO_RECORD", "false")
+    return autorecord_flag.lower() == "true"
+
+
 @routes.get("/webhook/answer/")
 async def answer_call(request):
     """Webhook event for answering incoming call to the hotline.
 
     Return the NCCO:
-    - talk, indicate that this is the Code of Conduct hotline, and that this call is recorded
+    - talk, indicate that this is the Code of Conduct hotline, and whether this call is recorded
     - connect the caller to a conference call (a conversation)
     - play music while the called is waiting to be connected
-    - record the call
+    - record the call (if environment variable is set)
 
     Dial everyone on staff, adding them to the same conversation
 
     """
     conversation_uuid = request.rel_url.query["conversation_uuid"].strip()
     call_uuid = request.rel_url.query["uuid"].strip()
+    greeting = "You've reached the PyCascades Code of Conduct Hotline."
 
-    ncco = [
-        {
-            "action": "talk",
-            "text": "You've reached the PyCascades Code of Conduct Hotline. This call is recorded.",
-        },
-        {
-            "action": "conversation",
-            "name": conversation_uuid,
-            "record": True,
-            "eventMethod": "POST",
-            "musicOnHoldUrl": [random.choice(MUSIC_WHILE_YOU_WAIT)],
-            "eventUrl": [os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")],
-            "endOnExit": False,
-            "startOnEnter": False,
-        },
-    ]
+    conversation_ncco = {
+        "action": "conversation",
+        "name": conversation_uuid,
+        "eventMethod": "POST",
+        "musicOnHoldUrl": [random.choice(MUSIC_WHILE_YOU_WAIT)],
+        "endOnExit": False,
+        "startOnEnter": False,
+    }
+
+    if is_auto_recording():
+        greeting = f"{greeting} This call is recorded."
+        conversation_ncco.update(
+            {
+                "record": True,
+                "eventUrl": [
+                    os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")
+                ],
+            }
+        )
+
+    ncco = [{"action": "talk", "text": greeting}, conversation_ncco]
 
     client = get_nexmo_client()
     phone_numbers = get_phone_numbers()
@@ -99,10 +110,11 @@ async def answer_call(request):
                     "number": os.environ.get("NEXMO_HOTLINE_NUMBER"),
                 },
                 "answer_url": [
-                    f"https://mariatta-enhanced-coc.herokuapp.com/webhook/answer_conference_call/{conversation_uuid}/{call_uuid}/"
+                    f"https://pycascades-coc-hotline-2019.herokuapp.com/webhook/answer_conference_call/{conversation_uuid}/{call_uuid}/"
                 ],
             }
         )
+
     return web.json_response(ncco)
 
 
@@ -150,6 +162,7 @@ async def answer_conference_call(request):
             "endOnExit": True,
         },
     ]
+
     return web.json_response(ncco)
 
 

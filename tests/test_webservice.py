@@ -75,11 +75,23 @@ def webservice_cli(loop, aiohttp_client, monkeypatch):
     monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
     monkeypatch.setitem(os.environ, "NEXMO_APP_ID", "app_id")
     monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", mock_private_key)
+
+    app = web.Application()
+    app.router.add_routes(routes)
+    return loop.run_until_complete(aiohttp_client(app))
+
+
+@pytest.fixture
+def webservice_cli_autorecord(loop, aiohttp_client, monkeypatch):
+    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
+    monkeypatch.setitem(os.environ, "NEXMO_APP_ID", "app_id")
+    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", mock_private_key)
     monkeypatch.setitem(
         os.environ,
         "ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL",
         "https://hooks.zapier.com/1111/2222",
     )
+    monkeypatch.setitem(os.environ, "AUTO_RECORD", "True")
 
     app = web.Application()
     app.router.add_routes(routes)
@@ -99,17 +111,18 @@ async def test_answer_call(webservice_cli):
         assert response[0]["action"] == "talk"
         assert (
             response[0]["text"]
-            == "You've reached the PyCascades Code of Conduct Hotline. This call is recorded."
+            == "You've reached the PyCascades Code of Conduct Hotline."
         )
 
         assert response[1]["action"] == "conversation"
         assert response[1]["name"] == "CON-123-456"
-        assert response[1]["record"] is True
         assert response[1]["eventMethod"] == "POST"
         assert response[1]["musicOnHoldUrl"][0] in MUSIC_WHILE_YOU_WAIT
-        assert response[1]["eventUrl"] == ["https://hooks.zapier.com/1111/2222"]
         assert response[1]["endOnExit"] is False
         assert response[1]["startOnEnter"] is False
+
+        assert not response[1].get("record")
+        assert not response[1].get("eventUrl")
 
 
 async def test_answer_conference_call(webservice_cli):
@@ -132,3 +145,29 @@ async def test_answer_conference_call(webservice_cli):
         assert response[1]["name"] == "CON-123-456"
         assert response[1]["startOnEnter"] is True
         assert response[1]["endOnExit"] is True
+
+
+async def test_answer_call_auto_record(webservice_cli_autorecord):
+    with mock.patch("webservice.__main__.get_nexmo_client") as mock_nexmo_client:
+        mock_nexmo_client.return_value = FakeNexmoClient()
+        resp = await webservice_cli_autorecord.get(
+            "/webhook/answer/?conversation_uuid=CON-123-456&uuid=aaaa-bbbb&to=1800123456&from=Restricted"
+        )
+        assert resp.status == 200
+        response = await resp.json()
+
+        assert response[0]["action"] == "talk"
+        assert (
+            response[0]["text"]
+            == "You've reached the PyCascades Code of Conduct Hotline. This call is recorded."
+        )
+
+        assert response[1]["action"] == "conversation"
+        assert response[1]["name"] == "CON-123-456"
+        assert response[1]["eventMethod"] == "POST"
+        assert response[1]["musicOnHoldUrl"][0] in MUSIC_WHILE_YOU_WAIT
+        assert response[1]["endOnExit"] is False
+        assert response[1]["startOnEnter"] is False
+
+        assert response[1]["record"] is True
+        assert response[1]["eventUrl"] == ["https://hooks.zapier.com/1111/2222"]
