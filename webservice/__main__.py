@@ -18,10 +18,14 @@ MUSIC_WHILE_YOU_WAIT = [
 
 def get_nexmo_client():
     """Return an instance of Nexmo client library"""
+    api_key = os.environ.get("NEXMO_API_KEY")
+    api_secret = os.environ.get("NEXMO_API_SECRET")
     app_id = os.environ.get("NEXMO_APP_ID")
     private_key = os.environ.get("NEXMO_PRIVATE_KEY_VOICE_APP")
 
-    client = nexmo.Client(application_id=app_id, private_key=private_key)
+    client = nexmo.Client(
+        key=api_key, secret=api_secret, application_id=app_id, private_key=private_key
+    )
     return client
 
 
@@ -72,6 +76,7 @@ async def answer_call(request):
     Dial everyone on staff, adding them to the same conversation
 
     """
+    hotline_number = request.rel_url.query["to"]
     conversation_uuid = request.rel_url.query["conversation_uuid"].strip()
     call_uuid = request.rel_url.query["uuid"].strip()
     greeting = "You've reached the PyCascades Code of Conduct Hotline."
@@ -105,12 +110,9 @@ async def answer_call(request):
         client.create_call(
             {
                 "to": [{"type": "phone", "number": phone_number_dict["phone"]}],
-                "from": {
-                    "type": "phone",
-                    "number": os.environ.get("NEXMO_HOTLINE_NUMBER"),
-                },
+                "from": {"type": "phone", "number": hotline_number},
                 "answer_url": [
-                    f"https://pycascades-coc-hotline-2019.herokuapp.com/webhook/answer_conference_call/{conversation_uuid}/{call_uuid}/"
+                    f"http://{request.host}/webhook/answer_conference_call/{conversation_uuid}/{call_uuid}/"
                 ],
             }
         )
@@ -164,6 +166,44 @@ async def answer_conference_call(request):
     ]
 
     return web.json_response(ncco)
+
+
+@routes.get("/webhook/inbound-sms/")
+async def inbound_sms(request):
+    """Webhook event that receives and inbound SMS messages and notifies all
+    staff.
+
+    It also sends the sender an acknowledgment.
+
+    This should be configured in Nexmo to send using GET.
+    """
+    hotline_number = request.rel_url.query["to"]
+    from_number = request.rel_url.query["msisdn"]
+    message = request.rel_url.query["text"]
+
+    client = get_nexmo_client()
+    phone_numbers = get_phone_numbers()
+
+    for phone_number_dict in phone_numbers:
+        client.send_message(
+            {
+                # Send from the number the received this message.
+                "from": hotline_number,
+                "to": phone_number_dict["phone"],
+                "text": f"{from_number}: {message}"[:140],
+            }
+        )
+
+    # Reply to the sender and acknowledge receipt.
+    client.send_message(
+        {
+            "from": hotline_number,
+            "to": from_number,
+            "text": "Thanks for contacting the CoC hotline. Someone should follow-up shortly. Note: they may follow up from a different number.",
+        }
+    )
+
+    return web.Response(status=204)
 
 
 if __name__ == "__main__":  # pragma: no cover

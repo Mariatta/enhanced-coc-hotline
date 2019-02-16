@@ -1,7 +1,7 @@
 import json
 import os
+from unittest import mock
 
-import mock
 import pytest
 from aiohttp import web
 
@@ -12,6 +12,10 @@ from webservice.__main__ import (
     get_phone_numbers,
     routes,
 )
+
+mock_api_key = "apikey"
+
+mock_api_secret = "sssh"
 
 mock_private_key = """
 -----BEGIN PRIVATE KEY-----
@@ -29,12 +33,16 @@ mock_phone_numbers = [
 
 
 def test_get_nexmo_client(monkeypatch):
+    monkeypatch.setitem(os.environ, "NEXMO_API_KEY", mock_api_key)
+    monkeypatch.setitem(os.environ, "NEXMO_API_SECRET", mock_api_secret)
     monkeypatch.setitem(os.environ, "NEXMO_APP_ID", "app_id")
     monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", mock_private_key)
 
     client = get_nexmo_client()
     assert client.application_id == "app_id"
     assert client.private_key == mock_private_key
+    assert client.api_key == mock_api_key
+    assert client.api_secret == mock_api_secret
 
 
 def test_get_phone_numbers(monkeypatch):
@@ -62,12 +70,16 @@ class FakeNexmoClient:
     def __init__(self):
         self.calls_created = []
         self.speech_sent = []
+        self.messages_sent = []
 
     def create_call(self, params=None, **kwargs):
         self.calls_created.append(params)
 
     def send_speech(self, params=None, **kwargs):
         self.speech_sent.append(params)
+
+    def send_message(self, params=None, **kwargs):
+        self.messages_sent.append(params)
 
 
 @pytest.fixture
@@ -171,3 +183,35 @@ async def test_answer_call_auto_record(webservice_cli_autorecord):
 
         assert response[1]["record"] is True
         assert response[1]["eventUrl"] == ["https://hooks.zapier.com/1111/2222"]
+
+
+async def test_inbound_sms(webservice_cli):
+    with mock.patch("webservice.__main__.get_nexmo_client") as mock_nexmo_client:
+        nexmo_client = FakeNexmoClient()
+        mock_nexmo_client.return_value = nexmo_client
+
+        reporter_number = "1234"
+        hotline_number = "5678"
+        text = "onetwothree"
+
+        resp = await webservice_cli.get(
+            f"/webhook/inbound-sms/?msisdn={reporter_number}&to={hotline_number}&text={text}"
+        )
+
+        assert resp.status == 204
+
+        # One for each person on staff, one to respond to the reporter.
+        assert len(nexmo_client.messages_sent) == 3
+
+        # Check that the organizers got the message.
+        for n, phone_number_dict in enumerate(mock_phone_numbers):
+            message = nexmo_client.messages_sent[n]
+            assert message["from"] == hotline_number
+            assert message["to"] == phone_number_dict["phone"]
+            assert text in message["text"]
+
+        # Check the response message
+        response_message = nexmo_client.messages_sent[-1]
+        assert response_message["to"] == reporter_number
+        assert response_message["from"] == hotline_number
+        assert "CoC" in response_message["text"]
