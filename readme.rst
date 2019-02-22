@@ -54,9 +54,13 @@ Deployment
 
 In Heroku, set the environment variables:
 
+- ``NEXMO_API_KEY``: The Nexmo API Key
+
+- ``NEXMO_API_SECRET``: The Nexmo API Key Secret
+
 - ``NEXMO_APP_ID``: The Nexmo App ID
 
-- ``NEXMO_PRIVATE_KEY_VOICE_APP``: The content of the private key (from private.key file).
+- ``NEXMO_PRIVATE_KEY_VOICE_APP``: The path to the Nexmo App's private key (private.key file).
   
   It looks like the following:
   ``----- BEGIN PRIVATE KEY ----   blablahblah ---- END PRIVATE KEY ----``
