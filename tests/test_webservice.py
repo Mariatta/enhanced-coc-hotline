@@ -33,6 +33,7 @@ MOCK_PHONE_NUMBERS = [
 
 MOCK_HOTLINE_DESC = "PyCascades Head Office"
 
+
 def test_get_nexmo_client(monkeypatch):
     monkeypatch.setitem(os.environ, "NEXMO_API_KEY", MOCK_API_KEY)
     monkeypatch.setitem(os.environ, "NEXMO_API_SECRET", MOCK_API_SECRET)
@@ -126,10 +127,7 @@ async def test_answer_call(webservice_cli):
         response = await resp.json()
 
         assert response[0]["action"] == "talk"
-        assert (
-            response[0]["text"]
-            == f"You've reached the {MOCK_HOTLINE_DESC}."
-        )
+        assert response[0]["text"] == f"You've reached the {MOCK_HOTLINE_DESC}."
 
         assert response[1]["action"] == "conversation"
         assert response[1]["name"] == "CON-123-456"
