@@ -7,6 +7,11 @@ python:
   - "nightly"
 dist: xenial
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    python: "nightly"
+
 before_install:
   - python3 -m pip install -U pip
 install:
