@@ -58,6 +58,10 @@ def get_phone_number_owner(phone_number):
     return None
 
 
+def get_hotline_description():
+    """Return the description of this hotline, e.g: CoC hotline, or Head office"""
+    return os.environ.get("HOTLINE_DESC")
+
 def is_auto_recording():
     autorecord_flag = os.environ.get("AUTO_RECORD", "false")
     return autorecord_flag.lower() == "true"
@@ -79,7 +83,7 @@ async def answer_call(request):
     hotline_number = request.rel_url.query["to"]
     conversation_uuid = request.rel_url.query["conversation_uuid"].strip()
     call_uuid = request.rel_url.query["uuid"].strip()
-    greeting = "You've reached the PyCascades Code of Conduct Hotline."
+    greeting = f"You've reached the {get_hotline_description()}."
 
     conversation_ncco = {
         "action": "conversation",
@@ -155,7 +159,7 @@ async def answer_conference_call(request):
     ncco = [
         {
             "action": "talk",
-            "text": f"Hello {phone_number_owner}, connecting you to PyCascades hotline.",
+            "text": f"Hello {phone_number_owner}, connecting you to {get_hotline_description()}.",
         },
         {
             "action": "conversation",
@@ -199,7 +203,7 @@ async def inbound_sms(request):
         {
             "from": hotline_number,
             "to": from_number,
-            "text": "Thanks for contacting the CoC hotline. Someone should follow-up shortly. Note: they may follow up from a different number.",
+            "text": f"Thanks for contacting the {get_hotline_description()}. Someone should follow-up shortly. Note: they may follow up from a different number.",
         }
     )
 

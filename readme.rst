@@ -77,6 +77,9 @@ In Heroku, set the environment variables:
 - ``ZAPIER_CATCH_HOOK_RECORDING_URL``: The `Webhooks By Zapier <https://zapier.com/page/webhooks/>`_ url.
   This is only needed if ``AUTO_RECORD`` is ``True``.
 
+- ``HOTLINE_DESC``: the description of this Hotline. For example: ``PyCascades Code of Conduct Hotline``
+  or ``PyCascades Head Office``.
+
 
 Downloading the recording
 -------------------------

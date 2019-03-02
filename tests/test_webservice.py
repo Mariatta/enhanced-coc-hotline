@@ -13,11 +13,11 @@ from webservice.__main__ import (
     routes,
 )
 
-mock_api_key = "apikey"
+MOCK_API_KEY = "apikey"
 
-mock_api_secret = "sssh"
+MOCK_API_SECRET = "sssh"
 
-mock_private_key = """
+MOCK_PRIVATE_KEY = """
 -----BEGIN PRIVATE KEY-----
 MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCxephXEnphnbrX
 spKQR5hXvOFik/0PKvwt2u9/RXyae81rPH+bzJ1iQoYhnNjeGyluNLMewFvKMP9m
@@ -26,41 +26,43 @@ xeWgzMQ2O7CmqG/dYYeiTg==
 """
 
 
-mock_phone_numbers = [
+MOCK_PHONE_NUMBERS = [
     {"name": "Mariatta", "phone": "16040001234"},
     {"name": "Miss Islington", "phone": "17782223333"},
 ]
 
+MOCK_HOTLINE_DESC = "PyCascades Head Office"
 
 def test_get_nexmo_client(monkeypatch):
-    monkeypatch.setitem(os.environ, "NEXMO_API_KEY", mock_api_key)
-    monkeypatch.setitem(os.environ, "NEXMO_API_SECRET", mock_api_secret)
+    monkeypatch.setitem(os.environ, "NEXMO_API_KEY", MOCK_API_KEY)
+    monkeypatch.setitem(os.environ, "NEXMO_API_SECRET", MOCK_API_SECRET)
     monkeypatch.setitem(os.environ, "NEXMO_APP_ID", "app_id")
-    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", mock_private_key)
+    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", MOCK_PRIVATE_KEY)
+    monkeypatch.setitem(os.environ, "HOTLINE_DESC", MOCK_HOTLINE_DESC)
 
     client = get_nexmo_client()
     assert client.application_id == "app_id"
-    assert client.private_key == mock_private_key
-    assert client.api_key == mock_api_key
-    assert client.api_secret == mock_api_secret
+    assert client.private_key == MOCK_PRIVATE_KEY
+    assert client.api_key == MOCK_API_KEY
+    assert client.api_secret == MOCK_API_SECRET
 
 
 def test_get_phone_numbers(monkeypatch):
-    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
+    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(MOCK_PHONE_NUMBERS))
 
     phone_numbers = get_phone_numbers()
-    assert phone_numbers == mock_phone_numbers
+    assert phone_numbers == MOCK_PHONE_NUMBERS
 
 
 def test_get_phone_number_owner(monkeypatch):
-    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
+    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(MOCK_PHONE_NUMBERS))
 
-    owner = get_phone_number_owner(mock_phone_numbers[0]["phone"])
-    assert owner == mock_phone_numbers[0]["name"]
+    owner = get_phone_number_owner(MOCK_PHONE_NUMBERS[0]["phone"])
+    assert owner == MOCK_PHONE_NUMBERS[0]["name"]
 
 
 def test_get_phone_number_owner_not_found(monkeypatch):
-    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
+    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(MOCK_PHONE_NUMBERS))
 
     owner = get_phone_number_owner("0000000")
     assert owner is None
@@ -84,9 +86,10 @@ class FakeNexmoClient:
 
 @pytest.fixture
 def webservice_cli(loop, aiohttp_client, monkeypatch):
-    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
+    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(MOCK_PHONE_NUMBERS))
     monkeypatch.setitem(os.environ, "NEXMO_APP_ID", "app_id")
-    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", mock_private_key)
+    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", MOCK_PRIVATE_KEY)
+    monkeypatch.setitem(os.environ, "HOTLINE_DESC", MOCK_HOTLINE_DESC)
 
     app = web.Application()
     app.router.add_routes(routes)
@@ -95,14 +98,16 @@ def webservice_cli(loop, aiohttp_client, monkeypatch):
 
 @pytest.fixture
 def webservice_cli_autorecord(loop, aiohttp_client, monkeypatch):
-    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(mock_phone_numbers))
+    monkeypatch.setitem(os.environ, "PHONE_NUMBERS", json.dumps(MOCK_PHONE_NUMBERS))
     monkeypatch.setitem(os.environ, "NEXMO_APP_ID", "app_id")
-    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", mock_private_key)
+    monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", MOCK_PRIVATE_KEY)
     monkeypatch.setitem(
         os.environ,
         "ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL",
         "https://hooks.zapier.com/1111/2222",
     )
+    monkeypatch.setitem(os.environ, "HOTLINE_DESC", MOCK_HOTLINE_DESC)
+
     monkeypatch.setitem(os.environ, "AUTO_RECORD", "True")
 
     app = web.Application()
@@ -123,7 +128,7 @@ async def test_answer_call(webservice_cli):
         assert response[0]["action"] == "talk"
         assert (
             response[0]["text"]
-            == "You've reached the PyCascades Code of Conduct Hotline."
+            == f"You've reached the {MOCK_HOTLINE_DESC}."
         )
 
         assert response[1]["action"] == "conversation"
@@ -150,7 +155,7 @@ async def test_answer_conference_call(webservice_cli):
         assert response[0]["action"] == "talk"
         assert (
             response[0]["text"]
-            == "Hello Mariatta, connecting you to PyCascades hotline."
+            == f"Hello Mariatta, connecting you to {MOCK_HOTLINE_DESC}."
         )
 
         assert response[1]["action"] == "conversation"
@@ -171,7 +176,7 @@ async def test_answer_call_auto_record(webservice_cli_autorecord):
         assert response[0]["action"] == "talk"
         assert (
             response[0]["text"]
-            == "You've reached the PyCascades Code of Conduct Hotline. This call is recorded."
+            == f"You've reached the {MOCK_HOTLINE_DESC}. This call is recorded."
         )
 
         assert response[1]["action"] == "conversation"
@@ -204,7 +209,7 @@ async def test_inbound_sms(webservice_cli):
         assert len(nexmo_client.messages_sent) == 3
 
         # Check that the organizers got the message.
-        for n, phone_number_dict in enumerate(mock_phone_numbers):
+        for n, phone_number_dict in enumerate(MOCK_PHONE_NUMBERS):
             message = nexmo_client.messages_sent[n]
             assert message["from"] == hotline_number
             assert message["to"] == phone_number_dict["phone"]
@@ -214,4 +219,4 @@ async def test_inbound_sms(webservice_cli):
         response_message = nexmo_client.messages_sent[-1]
         assert response_message["to"] == reporter_number
         assert response_message["from"] == hotline_number
-        assert "CoC" in response_message["text"]
+        assert MOCK_HOTLINE_DESC in response_message["text"]
