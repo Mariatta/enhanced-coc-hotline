@@ -62,6 +62,7 @@ def get_hotline_description():
     """Return the description of this hotline, e.g: CoC hotline, or Head office"""
     return os.environ.get("HOTLINE_DESC")
 
+
 def is_auto_recording():
     autorecord_flag = os.environ.get("AUTO_RECORD", "false")
     return autorecord_flag.lower() == "true"
