@@ -4,13 +4,16 @@ python:
   - "3.6"
   - "3.7"
   - "3.7-dev"
+  - "3.8-dev"
   - "nightly"
 dist: xenial
 
 matrix:
-  fast_finish: true
   allow_failures:
-    python: "nightly"
+  - python: 3.8-dev
+    dist: xenial
+  - python: nightly
+    dist: xenial
 
 before_install:
   - python3 -m pip install -U pip
