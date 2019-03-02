@@ -1,14 +1,11 @@
 language: python
 cache: pip
 python:
-  - 3.6-dev
-  - nightly
-
-matrix:
-  include:
-    - python: "3.7"
-      dist: xenial
-      sudo: true
+  - "3.6"
+  - "3.7"
+  - "3.7-dev"
+  - "nightly"
+dist: xenial
 
 before_install:
   - python3 -m pip install -U pip
