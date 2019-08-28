@@ -101,7 +101,7 @@ async def answer_call(request):
             {
                 "record": True,
                 "eventUrl": [
-                    os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL")
+                    os.environ.get("ZAPIER_CATCH_HOOK_RECORDING_URL")
                 ],
             }
         )
