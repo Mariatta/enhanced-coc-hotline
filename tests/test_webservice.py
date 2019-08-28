@@ -104,7 +104,7 @@ def webservice_cli_autorecord(loop, aiohttp_client, monkeypatch):
     monkeypatch.setitem(os.environ, "NEXMO_PRIVATE_KEY_VOICE_APP", MOCK_PRIVATE_KEY)
     monkeypatch.setitem(
         os.environ,
-        "ZAPIER_CATCH_HOOK_RECORDING_FINISHED_URL",
+        "ZAPIER_CATCH_HOOK_RECORDING_URL",
         "https://hooks.zapier.com/1111/2222",
     )
     monkeypatch.setitem(os.environ, "HOTLINE_DESC", MOCK_HOTLINE_DESC)
