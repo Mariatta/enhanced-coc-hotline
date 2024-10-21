@@ -1,5 +1,5 @@
 -r requirements.txt
-pytest==4.5.0
-pytest-asyncio==0.10.0
-pytest-aiohttp==0.3.0
-coverage==4.5.3
+pytest==8.3.3
+pytest-asyncio==0.24.0
+pytest-aiohttp==1.0.5
+coverage==7.6.4
